@@ -13,7 +13,8 @@ namespace devStreamAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize    public class JogosController : ControllerBase
+    [Authorize]
+    public class JogosController : ControllerBase
     {
         private readonly DevStreamAPIContext _context;
 
@@ -42,6 +43,23 @@ namespace devStreamAPI.Controllers
             }
 
             return jogo;
+        }
+
+        // GET: api/Jogos/ByNome
+        [AllowAnonymous]
+        [HttpGet("Nome/{nome}")]
+        public async Task<ActionResult<IEnumerable<Jogo>>> GetJogosByNome(string nome)
+        {
+            var jogos = await _context.Jogos
+                .Where(j => j.JogoNome.Contains(nome))
+                .ToListAsync();
+
+            if (jogos == null || !jogos.Any())
+            {
+                return NotFound();
+            }
+
+            return jogos;
         }
 
         // PUT: api/Jogos/5
